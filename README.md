@@ -53,6 +53,8 @@ Each variable is represented as a JSON object with the following fields:
    - Trigger the tool via the menu entry (e.g., `Mock Clone Tools > Run JDT Parser`).
 4. A `.json` file containing the extracted data will be generated in the configured output directory.
 
+This is a JDT-based Eclipse plugin. For detailed instructions on how to use it, please refer to [Eclipse JDT - Abstract Syntax Tree (AST) and the Java Model](https://vogella.com/tutorials/EclipseJDT/article.html).
+
 ---
 
 ## Dependencies
