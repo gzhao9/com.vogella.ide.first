@@ -15,6 +15,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 
+
 public class ObjectVisitor extends ASTVisitor {
 
 	public String filePath;
@@ -49,76 +50,78 @@ public class ObjectVisitor extends ASTVisitor {
             }
         }
         return super.visit(node);
-    }
-    
-    @Override
-    public boolean visit(MethodDeclaration node) {
+        }
+        
+        @Override
+        public boolean visit(MethodDeclaration node) {
         String methodName = node.getName().getIdentifier();
         String methodAnnotations = extractAnnotations(node);
 
         node.accept(new ASTVisitor() {
             @Override
             public boolean visit(VariableDeclarationFragment fragment) {
-                String creationType = "";
-                String dependency = "";
+            String creationType = "";
+            String dependency = "";
 
+            try {
                 // 获取类型绑定信息（dependency）
                 if (fragment.resolveBinding() != null && fragment.resolveBinding().getType() != null) {
-                    dependency = fragment.resolveBinding().getType().getQualifiedName();
+                dependency = fragment.resolveBinding().getType().getQualifiedName();
                 }
 
                 // 检查初始化表达式是否是类实例创建
                 if (fragment.getInitializer() instanceof ClassInstanceCreation) {
-                    ClassInstanceCreation initializer = (ClassInstanceCreation) fragment.getInitializer();
-                    ITypeBinding typeBinding = initializer.resolveTypeBinding();
-                    if (typeBinding != null) {
-                        creationType = typeBinding.getQualifiedName();
-                    } else {
-                        creationType = initializer.getType().toString();
-                    }
+                ClassInstanceCreation initializer = (ClassInstanceCreation) fragment.getInitializer();
+                ITypeBinding typeBinding = initializer.resolveTypeBinding();
+                if (typeBinding != null) {
+                    creationType = typeBinding.getQualifiedName();
+                } else {
+                    creationType = initializer.getType().toString();
+                }
                 }
                 // 检查初始化表达式是否是方法调用
                 else if (fragment.getInitializer() instanceof MethodInvocation) {
-                    MethodInvocation initializer = (MethodInvocation) fragment.getInitializer();
-                    IMethodBinding methodBinding = initializer.resolveMethodBinding();
+                MethodInvocation initializer = (MethodInvocation) fragment.getInitializer();
+                IMethodBinding methodBinding = initializer.resolveMethodBinding();
 
-                    if (methodBinding != null) {
-                        ITypeBinding declaringClassBinding = methodBinding.getDeclaringClass();
-                        ITypeBinding returnTypeBinding = methodBinding.getReturnType();
-                        if (declaringClassBinding != null) {
-                        	dependency = returnTypeBinding.getQualifiedName();
-//                            creationType = methodBinding.getName();
-                        	creationType =  declaringClassBinding.getName() + "." + methodBinding.getName();
-                        	
-                        }
+                if (methodBinding != null) {
+                    ITypeBinding declaringClassBinding = methodBinding.getDeclaringClass();
+                    ITypeBinding returnTypeBinding = methodBinding.getReturnType();
+                    if (declaringClassBinding != null) {
+                    dependency = returnTypeBinding.getQualifiedName();
+                    creationType = declaringClassBinding.getName() + "." + methodBinding.getName();
+                    }
+                } else {
+                    Expression expr = initializer.getExpression();
+                    if (expr != null) {
+                    creationType = expr.toString() + "." + initializer.getName().getIdentifier();
                     } else {
-                    	Expression expr = initializer.getExpression();
-                    	if (expr != null) {
-                    	    creationType = expr.toString() + "." + initializer.getName().getIdentifier();
-                    	} else {
-                    	    creationType = initializer.getName().getIdentifier();
-                    	}
+                    creationType = initializer.getName().getIdentifier();
                     }
                 }
+                }
+            } catch (Exception e) {
+                // 跳过无法解析的情况
+            }
 
-                TestObject testObject = new TestObject(
-                        filePath,
-                        methodName,
-                        methodAnnotations,
-                        fragment.getName().toString(),
-                        dependency,
-                        creationType,
-                        fragment.toString().replace("\n", "")
-                );
-                testObjects.add(testObject);
-                return super.visit(fragment);
+            TestObject testObject = new TestObject(
+                filePath,
+                methodName,
+                methodAnnotations,
+                fragment.getName().toString(),
+                dependency,
+                creationType,
+                fragment.toString().replace("\n", "")
+            );
+            testObjects.add(testObject);
+            return super.visit(fragment);
             }
         });
         return super.visit(node);
-    }
+        }
 
 
-    private String extractAnnotations(BodyDeclaration node) {
+        private String extractAnnotations(BodyDeclaration node) {
         List<String> annotationsList = new ArrayList<>();
         for (Object modifier : node.modifiers()) {
             if (modifier instanceof MarkerAnnotation) {

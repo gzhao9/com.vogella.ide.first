@@ -41,23 +41,69 @@ Each variable is represented as a JSON object with the following fields:
 }
 ```
 
----
 
 ## How to Use
 
-1. Import the project into Eclipse as a Plug-in Project.
-2. Launch the plugin using:
-   `Run > Run Configurations > Eclipse Application`
-3. In the runtime Eclipse window:
-   - Open or import Java projects containing test files.
-   - Trigger the tool via the menu entry (e.g., `Mock Clone Tools > Run JDT Parser`).
-4. A `.json` file containing the extracted data will be generated in the configured output directory.
+This tool is implemented as an Eclipse Plug-in Project based on Eclipse JDT. Follow the steps below to set up and run the parser.
 
-This is a JDT-based Eclipse plugin. For detailed instructions on how to use it, please refer to [Eclipse JDT - Abstract Syntax Tree (AST) and the Java Model](https://vogella.com/tutorials/EclipseJDT/article.html).
+### 1. Environment
 
----
+Tested on:
 
-## Dependencies
+- Eclipse IDE for Java Developers (2024-06 or later)
 
-- Eclipse JDT Core
-- GSON (for JSON serialization)
+We recommend using the same or a newer version.  
+Download: https://www.eclipse.org/downloads/packages/
+
+### 2. Import the Project
+
+- In Eclipse, go to `File > Open Projects from File System...`
+- Select the directory containing this project
+- Eclipse will detect and import the `com.vogella.ide.first.parser` plug-in project
+
+    ![Tutorial Image](./pictures/Import.png)
+### 3. Set Output Path
+
+- In the Project Explorer, open `com.vogella.ide.first.parser > src > com.vogella.ide.first.parser > TestObjectHandler.java`
+- Locate the following line:
+
+```java
+    String outPutPath =  		
+    	"path\\floder\\to\\output\\"
+        + projects[0].getName() + "-Result.json";
+```
+
+- Replace it with the absolute path of the folder where you want the JSON output file to be saved
+
+### 4. Launch the Plugin
+
+- Go to `Run > Run Configurations...`
+![alt text](./pictures/Configurations.png)
+- Select `Eclipse Application` from the left sidebar
+![alt text](./pictures/Application.png)
+- Click `New Launch Configuration` (the white page icon)
+- Click **Run**
+
+A new Eclipse window (runtime Eclipse) will launch
+
+### 5. In the Runtime Eclipse
+
+- Open or import the Java projects you want to analyze (must contain JUnit-based test code)
+- Make sure the project compiles and resolves all dependencies (especially if it's a Maven/Gradle project)
+
+### 6. Run the Parser
+
+- In the top menu of the runtime Eclipse, 
+![alt text](./pictures/image.png)
+- The parser will analyze the test classes of your open projects
+- When it finishes, a pop-up will appear with a message like:  
+  `Output results to: C:\your\path\result.json`  
+  `Object count: 248`
+![alt text](./pictures/result.png)
+### 7. Check Output
+
+- Navigate to the folder you configured in `TestObjectHandler.java`
+- You will find a `.json` file containing the extracted variable information
+
+
+

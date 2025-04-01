@@ -55,14 +55,13 @@ public class TestObjectHandler extends AbstractHandler {
 
     }
     String outPutPath =
-//      "C:\\Users\\10590\\OneDrive - stevens.edu\\PHD\\2023 Fall\\clone detection\\parserResult\\"
-//    	"C:\\Users\\10590\\OneDrive - stevens.edu\\PHD\\2024 S\\mock clone detection\\parserResult\\"
-    		"C:\\Users\\10590\\OneDrive - stevens.edu\\PHD\\2024 Fall\\Hanbin parser\\"
+//    		
+    		"path\\floder\\to\\output\\"
         + projects[0].getName() + "-Result.json";
     printResults(outPutPath);
 
 	Shell shell = HandlerUtil.getActiveShell(event);
-	MessageDialog.openInformation(shell, "Handler Triggered", "Output written to: " + new File(outPutPath).getAbsolutePath() + ", Object count: " + testObjects.size());
+	MessageDialog.openInformation(shell, "Handler Triggered", "Output results to: " + new File(outPutPath).getAbsolutePath() + ", Object count: " + testObjects.size());
     return null;
   }
 
@@ -71,7 +70,7 @@ public class TestObjectHandler extends AbstractHandler {
       return false;
     }
     for (IImportDeclaration importDeclaration : unit.getImports()) {
-      if (importDeclaration.getElementName().contains("mockito")) {
+      if (importDeclaration.getElementName().contains("junit")) {
         return true;
       }
     }
