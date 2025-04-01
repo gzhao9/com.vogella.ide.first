@@ -54,9 +54,8 @@ public class TestObjectHandler extends AbstractHandler {
 		}
 
     }
-    String outPutPath =
-//    		
-    		"path\\floder\\to\\output\\"
+    String outPutPath =  		
+    	"path\\floder\\to\\output\\"
         + projects[0].getName() + "-Result.json";
     printResults(outPutPath);
 
