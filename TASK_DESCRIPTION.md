@@ -13,7 +13,7 @@ Your task is as follows:
 
 1. Select one Apache Java project.
 2. Use the provided parser to extract variable data from its test classes.
-3. Analyze the output to identify the five three most frequently mocked classes in the project.
+3. Analyze the output to identify the five most frequently mocked classes in the project.
 4. Write a report (no more than two pages) that:
   - Lists the top five most frequently mocked classes in the project.
   - Explains why those classes might be frequently mocked.
